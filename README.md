@@ -377,10 +377,15 @@ Expected: 400 Bad Request.
 ### 12. PUT Update Request
 <img width="1917" height="1077" alt="PUT Update Request" src="https://github.com/user-attachments/assets/cbcb8644-e7f0-4cc0-a8d2-074da63e57b7" />
 
+PUT – Update a Non-Existing Book
+<img width="1917" height="1078" alt="Screenshot 2026-11-05 235236" src="https://github.com/user-attachments/assets/8af17d8b-7282-4bb1-8d5a-30407906e369" />
+
 
 ### 13. DELETE Request
 <img width="1908" height="1078" alt="DELETE Request" src="https://github.com/user-attachments/assets/c505dccf-1d0b-4fa4-81cc-b2f4e2197de8" />
 
+DELETE – Delete a Non-Existing Book
+<img width="1917" height="1078" alt="Screenshot 2026-11-05 234958" src="https://github.com/user-attachments/assets/c9b3028a-ce2a-42b6-8d15-d43d949f9fa4" />
 
 ## Conclusion
 
