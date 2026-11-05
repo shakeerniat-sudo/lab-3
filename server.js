@@ -8,7 +8,7 @@ const fs = require("fs");
 const app = express();
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Connect to your existing database
 const dbPath = path.join(__dirname, "books.db");
