@@ -386,6 +386,228 @@ PUT – Update a Non-Existing Book
 
 DELETE – Delete a Non-Existing Book
 <img width="1917" height="1078" alt="Screenshot 2026-11-05 234958" src="https://github.com/user-attachments/assets/c9b3028a-ce2a-42b6-8d15-d43d949f9fa4" />
+##  Debugging & Troubleshooting
+
+During the development and deployment of the REST API, several common errors were identified and resolved.
+
+### 1. Port Already in Use (EADDRINUSE)
+
+**Error:**
+```text
+Error: listen EADDRINUSE: address already in use :::3000
+```
+
+**Cause:**
+Another application or previously running Node.js server is already using port 3000.
+
+**Solution:**
+
+Stop the previous server using `Ctrl + C` in its terminal.
+
+Alternatively, find the process using port 3000 in Windows:
+
+```powershell
+netstat -ano | findstr :3000
+```
+
+Terminate the process using its PID:
+
+```powershell
+taskkill /PID <PID> /F
+```
+
+Restart the application:
+
+```bash
+npm run dev
+```
+
+### 2. Wrong Import Path
+
+**Error:**
+```text
+Error: Cannot find module '../database'
+```
+
+**Cause:**
+The required file path or filename is incorrect.
+
+**Solution:**
+
+- Verify that the required file exists.
+- Check the folder structure.
+- Correct the relative import path.
+
+Example:
+
+```javascript
+const db = require("./database");
+```
+
+### 3. SQLite Table Not Found
+
+**Error:**
+```text
+SQLITE_ERROR: no such table: books
+```
+
+**Cause:**
+The requested table does not exist in the connected SQLite database, or the application is connecting to a different database file.
+
+**Solution:**
+
+- Verify the database filename and path.
+- Check that the `books` table is created.
+- Ensure database initialization happens before executing queries.
+- Verify the table name in SQL queries.
+
+Example:
+
+```sql
+CREATE TABLE IF NOT EXISTS books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    author TEXT,
+    price INTEGER,
+    pages INTEGER
+);
+```
+
+### 4. Missing Await in Asynchronous Operations
+
+**Problem:**
+
+Database operations return Promises. If `await` is missing, the response may contain a Promise instead of the actual database result.
+
+**Incorrect Code:**
+
+```javascript
+const books = db.all("SELECT * FROM books");
+res.json(books);
+```
+
+**Correct Code:**
+
+```javascript
+const books = await db.all("SELECT * FROM books");
+res.json(books);
+```
+
+**Solution:**
+
+Use `async/await` when handling asynchronous database operations and handle errors using `try/catch`.
+
+### 5. Missing Module (MODULE_NOT_FOUND)
+
+**Error:**
+```text
+Error: Cannot find module 'sqlite'
+```
+
+**Cause:**
+The required npm package is not installed or cannot be found in `node_modules`.
+
+**Solution:**
+
+Install the missing dependency:
+
+```bash
+npm install sqlite sqlite3
+```
+
+Verify the installed packages:
+
+```bash
+npm ls sqlite sqlite3
+```
+
+### 6. Missing Dev Script in package.json
+
+**Error:**
+```text
+npm error Missing script: "dev"
+```
+
+**Cause:**
+The `dev` script is missing from `package.json`, or the terminal is running in the wrong project directory.
+
+**Solution:**
+
+Add the following scripts to `package.json`:
+
+```json
+"scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+}
+```
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+### 7. Render Deployment Error (SQLite GLIBC Compatibility)
+
+**Error:**
+```text
+GLIBC_2.38 not found
+```
+
+**Cause:**
+The SQLite3 native binary was incompatible with the Linux runtime environment used by Render.
+
+**Troubleshooting:**
+
+- Use a compatible SQLite3 package version.
+- Configure the Node.js version.
+- Rebuild the SQLite3 native module in the Render build environment.
+- Clear the Render build cache and redeploy.
+
+Example Render Build Command:
+
+```bash
+npm ci && npm rebuild sqlite3 --build-from-source
+```
+
+### 8. SQLite3 Native Binding Not Found
+
+**Error:**
+```text
+Error: Could not locate the bindings file
+```
+
+**Cause:**
+The SQLite3 native module was not successfully built or installed for the deployment environment.
+
+**Solution:**
+
+Rebuild the native module:
+
+```bash
+npm rebuild sqlite3 --build-from-source
+```
+
+Check the Render build logs to verify that the compilation completes successfully.
+
+---
+
+### Debugging Summary
+
+| Error | Solution |
+|---|---|
+| EADDRINUSE | Stop the process using the port |
+| Wrong import path | Correct the require path |
+| No such table | Verify database and table creation |
+| Missing await | Use async/await |
+| MODULE_NOT_FOUND | Install the required package |
+| Missing dev script | Add scripts to package.json |
+| GLIBC compatibility | Rebuild SQLite3 for Render |
+| Native binding not found | Rebuild SQLite3 native module |
+
+**Result:** Common backend errors were identified, debugged and resolved through proper dependency management, database configuration, asynchronous programming and deployment troubleshooting.
 
 ## Conclusion
 
